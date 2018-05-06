@@ -8,14 +8,37 @@ include(ExternalProject)
 
 file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/include)
 
+#ExternalProject_Add(protobuf_src
+  #URL https://github.com/google/protobuf/releases/download/v2.6.1/protobuf-2.6.1.tar.gz
+  #UPDATE_COMMAND ""
+  #PATCH_COMMAND patch -p0 < ${CMAKE_SOURCE_DIR}/unused_parameter_warnings.patch &&
+                #patch -p0 < ${CMAKE_SOURCE_DIR}/unused_parameter_warnings_wire_format.patch
+  #CONFIGURE_COMMAND cd ../protobuf_src && ./autogen.sh && ./configure --with-pic --prefix=${CATKIN_DEVEL_PREFIX}
+  #BUILD_COMMAND cd ../protobuf_src && make -j8
+  #INSTALL_COMMAND cd ../protobuf_src && make install -j8
+#)
+
+set(PROTOBUF_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/protobuf/src/protobuf/src)
+set(PROTOBUF_URL https://github.com/google/protobuf.git)
+set(PROTOBUF_TAG b04e5cba356212e4e8c66c61bbe0c3a20537c5b9)
 ExternalProject_Add(protobuf_src
-  URL https://github.com/google/protobuf/releases/download/v2.6.1/protobuf-2.6.1.tar.gz
-  UPDATE_COMMAND ""
-  PATCH_COMMAND patch -p0 < ${CMAKE_SOURCE_DIR}/unused_parameter_warnings.patch &&
-                patch -p0 < ${CMAKE_SOURCE_DIR}/unused_parameter_warnings_wire_format.patch
-  CONFIGURE_COMMAND cd ../protobuf_src && ./autogen.sh && ./configure --with-pic --prefix=${CATKIN_DEVEL_PREFIX}
-  BUILD_COMMAND cd ../protobuf_src && make -j8
-  INSTALL_COMMAND cd ../protobuf_src && make install -j8
+    PREFIX protobuf
+    GIT_REPOSITORY ${PROTOBUF_URL}
+    GIT_TAG ${PROTOBUF_TAG}
+    BUILD_IN_SOURCE 1
+    SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/protobuf/src/protobuf
+    CONFIGURE_COMMAND ${CMAKE_COMMAND} cmake/
+        -DCMAKE_BUILD_TYPE:STRING=Release
+        -Dprotobuf_BUILD_TESTS:BOOL=OFF
+        -DCMAKE_INSTALL_PREFIX=${CATKIN_DEVEL_PREFIX}
+        -DCMAKE_INSTALL_LIBDIR=lib
+        -DBUILD_SHARED_LIBS=ON
+    CMAKE_CACHE_ARGS
+        -DCMAKE_BUILD_TYPE:STRING=Release
+        -Dprotobuf_BUILD_TESTS:BOOL=OFF
+        -DCMAKE_INSTALL_PREFIX=${CATKIN_DEVEL_PREFIX}
+        -DCMAKE_INSTALL_LIBDIR=lib
+        -DBUILD_SHARED_LIBS=ON
 )
 
 cs_add_library(${PROJECT_NAME} src/dependency_tracker.cc)
