@@ -20,7 +20,7 @@ file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/include)
 
 set(PROTOBUF_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/protobuf/src/protobuf/src)
 set(PROTOBUF_URL https://github.com/google/protobuf.git)
-set(PROTOBUF_TAG b04e5cba356212e4e8c66c61bbe0c3a20537c5b9)
+set(PROTOBUF_TAG v3.6.0)
 ExternalProject_Add(protobuf_src
     PREFIX protobuf
     GIT_REPOSITORY ${PROTOBUF_URL}
